@@ -6,7 +6,76 @@ const connection = mysql.createConnection(config);
 
 //.. Add Employee function
 
-addEmployee();
+const addEmployee = () => { 
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is their first name?",
+            name: "firstname"
+        },
+        {
+            type: "input",
+            message: "What is their last name?",
+            name: "lastname"
+        },
+        {
+            type: "list",
+            message: "What is their role? ",
+            choices: roleOptions(),
+            name: "role"
+        },
+        {
+            type: "list",
+            message: "Whats their managers name?",
+            choices: selectManager(),
+            name: "manager"
+        }
+    ]).then(function (val) {
+      var roleId = selectRole().indexOf(val.role) + 1
+      var managerId = selectManager().indexOf(val.manager) + 1
+      connection.query("INSERT INTO employee SET ?", 
+      {
+          first_name: val.firstName,
+          last_name: val.lastName,
+          manager_id: managerId,
+          role_id: roleId
+          
+      }, function(err){
+          if (err) throw err
+          console.table(val)
+          startPrompt()
+      })
+
+  })
+}
+
+//.. Role options function within add employee
+
+var rolesList = [];
+function roleOptions() {
+  connection.query("SELECT * FROM role", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      rolesList.push(res[i].name);
+    }
+
+  })
+  return rolesList;
+}
+
+//.. Select manager function within add employee
+
+var managersList = [];
+function selectManager() {
+  connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
+    if (err) throw err
+    for (var i = 0; i < res.length; i++) {
+      managersList.push(res[i].first_name);
+    }
+
+  })
+  return managersList;
+}
 
 //.. Update Employee Info function
 
@@ -31,10 +100,6 @@ viewAllRoles();
 //.. View employees by department function
 
 viewAllDepartments();
-
-
-
-
 
 
 
