@@ -22,13 +22,13 @@ VALUES
 
 CREATE TABLE role(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL,
     salary INT(10) NOT NULL,
     department_id INT(10) DEFAULT 0
 );
 
 INSERT INTO role
-    (title, salary, department_id)
+    (name, salary, department_id)
 VALUES
     ('Sales Lead', 100000, 1),
     ('Salesperson', 80000, 1),

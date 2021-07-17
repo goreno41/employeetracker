@@ -78,7 +78,7 @@ const addEmployee = () => {
 }
 
 
-//.. Update Employee Info function
+//.. Update Employee role function
 
 const updateRole = () => {
     connection.query("SELECT employee.last_name, role.name FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
@@ -163,24 +163,62 @@ const addRole = () => {
 //.. Add department function
 
 const addDepartment = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the new department?",
+            name: "name"
+        }
+    ]).then(function(res) {
+        var query = connection.query(
+            "INSERT INTO department SET ? ",
+            {
+              name: res.name
+            
+            },
+            function(err) {
+                if (err) throw err
+                console.table(res);
+                mainMenu();
+            }
+        )
+    })
 
 }
 
 //.. View all employees function
 
 const viewAllEmployees = () => {
+    connection.query("SELECT employee.first_name, employee.last_name, role.name, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;", 
+    function(err, res) {
+      if (err) throw err
+      console.table(res)
+      mainMenu()
+  })
 
 }
 
 //.. View employess by role function
 
-const viewAllRoles = () => {
+const viewByRoles = () => {
+    connection.query("SELECT employee.first_name, employee.last_name, role.name AS Title FROM employee JOIN role ON employee.role_id = role.id;", 
+    function(err, res) {
+    if (err) throw err
+    console.table(res)
+    mainMenu()
+    })
 
 }
 
 //.. View employees by department function
 
-const viewAllDepartments = () => {
+const viewByDepartments = () => {
+    onnection.query("SELECT employee.first_name, employee.last_name, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;", 
+  function(err, res) {
+    if (err) throw err
+    console.table(res)
+    mainMenu()
+  })
 
 }
 
@@ -222,10 +260,10 @@ const mainMenu = () => {
                 break;
     
           case "View All Employees By Roles":
-                    viewAllRoles();
+                    viewByRoles();
                 break;
           case "View all Employees By Deparments":
-                    viewAllDepartments();
+                    viewByDepartments();
                 break;
     
             }
