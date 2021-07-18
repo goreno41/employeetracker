@@ -22,7 +22,7 @@ VALUES
 
 CREATE TABLE role(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    title VARCHAR(50) NOT NULL,
     salary INT(10) NOT NULL,
     department_id INT(10) DEFAULT 0
 );

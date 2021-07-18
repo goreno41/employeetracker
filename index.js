@@ -11,7 +11,7 @@ const roleOptions = () => {
   connection.query("SELECT * FROM role", function(err, res) {
     if (err) throw err
     for (var i = 0; i < res.length; i++) {
-      rolesList.push(res[i].name);
+      rolesList.push(res[i].title);
     }
 
   })
@@ -81,7 +81,7 @@ const addEmployee = () => {
 //.. Update Employee role function
 
 const updateRole = () => {
-    connection.query("SELECT employee.last_name, role.name FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
+    connection.query("SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
      if (err) throw err
      console.log(res)
     inquirer.prompt([
@@ -105,7 +105,13 @@ const updateRole = () => {
           },
       ]).then(function(val) {
         var roleId = roleOptions().indexOf(val.role) + 1
-        connection.query("UPDATE employee SET WHERE ?", 
+        let  employeeID
+        for (i=0; i < employees.length; i++){
+            if (answer.employee == employees[i].Employee){
+                employeeID = employees[i].id;
+            }
+        }
+        connection.query(`UPDATE employee SET role_id = ${roleID} WHERE id = ${employeeID}`, 
         {
           last_name: val.lastName
            
@@ -128,12 +134,12 @@ const updateRole = () => {
 //.. Add role function
 
 const addRole = () => {
-    connection.query("SELECT role.name AS name, role.salary AS salary FROM role",   function(err, res) {
+    connection.query("SELECT role.title AS name, role.salary AS salary FROM role",   function(err, res) {
         inquirer.prompt([
             {
                 type: "input",
                 message: "What is the name of the new role?",
-                name: "name"
+                name: "title"
             },
             {
                 type: "input",
@@ -145,7 +151,7 @@ const addRole = () => {
             connection.query(
                 "INSERT INTO role SET ?",
                 {
-                  name: res.name,
+                  title: res.title,
                   salary: res.salary,
                 },
                 function(err) {
@@ -189,7 +195,7 @@ const addDepartment = () => {
 //.. View all employees function
 
 const viewAllEmployees = () => {
-    connection.query("SELECT employee.first_name, employee.last_name, role.name, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;", 
+    connection.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;", 
     function(err, res) {
       if (err) throw err
       console.table(res)
@@ -201,7 +207,7 @@ const viewAllEmployees = () => {
 //.. View employess by role function
 
 const viewByRoles = () => {
-    connection.query("SELECT employee.first_name, employee.last_name, role.name AS Title FROM employee JOIN role ON employee.role_id = role.id;", 
+    connection.query("SELECT employee.first_name, employee.last_name, role.title AS Title FROM employee JOIN role ON employee.role_id = role.id;", 
     function(err, res) {
     if (err) throw err
     console.table(res)
