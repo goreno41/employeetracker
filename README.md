@@ -1,4 +1,4 @@
-# Employee Tracjer
+# Employee Tracker
 This is a local running back end application used to track employees through MySQL
 
 # Prerequisites
